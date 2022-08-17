@@ -1,0 +1,16 @@
+version: '2'
+services:
+  userdb:
+    image: mysql:latest
+    volumes:
+      - userdb:/var/lib/mysql
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_DATABASE: userdb
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test
+volumes:
+  userdb:
