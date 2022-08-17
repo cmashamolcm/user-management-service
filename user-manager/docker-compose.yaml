@@ -1,0 +1,45 @@
+version: "3"
+services:
+  springBootApp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: user-app:latest
+    container_name: user-app
+    environment:
+      - MYSQL_HOST=mysql-app
+      - MYSQL_ROOT_PASSWORD=mysql
+    ports:
+      - "9081:8080"
+    networks:
+      - network
+    depends_on:
+      mysqlDb:
+          condition: service_healthy
+    restart: on-failure
+
+  mysqlDb:
+    image: mysql:latest
+    container_name: mysql-db
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=mysql
+      - MYSQL_DATABASE=userdb
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 20s
+      retries: 10
+    networks:
+      - network
+    volumes:
+      - volume:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+networks:
+  network:
+
+volumes:
+  volume:
