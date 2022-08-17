@@ -12,7 +12,7 @@ class App extends Component {
       <div className="main">
         <h1>User Management</h1>
         <Routes>
-          <Route path="/users" element={<UsersList />} />
+          <Route path="/users" element={<UsersList itemsPerPage={4} />} />
           <Route path="/add" element={<AddUser />} />
           <Route path="/user" element={<User />} />
         </Routes>

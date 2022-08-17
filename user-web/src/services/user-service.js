@@ -8,7 +8,7 @@ function UserDataService() {
   const getUser = (id) => {
     return http.get(`${API_BASE}${id}`);
   };
-  const createUser = (data) => {
+  const createUser = function (data) {
     return http.post(API_BASE, data);
   };
   const updateUser = (id, data) => {
@@ -22,4 +22,4 @@ function UserDataService() {
     return http.get(`${API_BASE}?name=${name}`);
   };
 }
-export default new UserDataService();
+export default UserDataService;
