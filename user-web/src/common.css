@@ -1,0 +1,12 @@
+div.add-user {
+  display: grid;
+  grid-template-columns: max-content max-content;
+  grid-gap: 10px;
+  margin: 30px;
+}
+div.add-user label {
+  text-align: right;
+}
+div.add-user label:after {
+  content: " ";
+}
