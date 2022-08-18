@@ -33,4 +33,25 @@ div.add-user label:after {
 
 .card {
   margin: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+.card button {
+  margin: 30px;
+}
+
+.edit-user {
+  display: flex;
+  flex-direction: column;
+}
+
+.edit-user a {
+  float: right;
+  margin-right: 20px;
+}
+
+.deletebtn {
+  background-color: #f24701 !important;
 }

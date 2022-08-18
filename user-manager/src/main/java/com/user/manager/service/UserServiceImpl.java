@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -57,7 +58,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserPage<User> getPageOfUsers(String nameToSearch, int page, int size, String sort) {
         Pageable pagingSort = PageRequest.of(page, size, Sort.by(sort));
-        Page<User> users = userRepository.findByNameContaining(nameToSearch, pagingSort);
+        Page<User> users = null;
+        if(nameToSearch == null || nameToSearch.trim().length()==0){
+            users = userRepository.findAll(pagingSort);
+        }else{
+            users = userRepository.findByNameContaining(nameToSearch, pagingSort);
+        }
         UserPage<User> result = new UserPage<>();
         result.setContent(users.getContent());
         result.setCurrentPage(users.getNumber());

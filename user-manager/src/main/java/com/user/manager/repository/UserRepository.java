@@ -10,4 +10,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository extends CrudRepository<User, Long> {
     Page<User> findByNameContaining(String name, Pageable pageable);
+
+    Page<User> findAll(Pageable pagingSort);
 }

@@ -1,36 +1,11 @@
 import React, { useEffect, useState } from "react";
 import ReactPaginate from "react-paginate";
+import { Link } from "react-router-dom";
 import "../common.css";
+import { getAllUsers } from "../services/user-service";
 
 // Example items, to simulate fetching from another resources.
-const items = [
-  {
-    id: 1,
-    name: "Radowski",
-    firstName: "Sebastian",
-    phone: "+4915158223840",
-    street: "Nobelstarße 26",
-    city: "Ingolstadt",
-    postalcode: "85051",
-    country: "Germany",
-    birthday: "2004-01-21T00:00:00.000+00:00",
-    gender: "Male",
-    nationality: "German",
-  },
-  {
-    id: 11,
-    name: "Radowski122",
-    firstName: "Sebastian",
-    phone: "+4915158223840",
-    street: "Nobelstarße 26",
-    city: "Ingolstadt",
-    postalcode: "85051",
-    country: "Germany",
-    birthday: "2004-11-21T00:00:00.000+00:00",
-    gender: "Male",
-    nationality: "German",
-  },
-];
+const items = [];
 function UserItem({ user }) {
   const dob = new Date(user.birthday);
   return (
@@ -49,11 +24,15 @@ function UserItem({ user }) {
             </div>
             <br />
             <div>
-              <p>
+              <i>
                 {user.street}, {user.city},{user.nationality}
-              </p>
+              </i>
             </div>
           </div>
+          <Link to={"/user/" + user.id}>
+            <button className="btn btn-primary">Edit</button>
+          </Link>
+          <button className="btn btn-primary deletebtn">Delete</button>
         </div>
       )}
     </>
@@ -65,7 +44,7 @@ function Items({ currentItems }) {
     <div className="user-items-list">
       {currentItems &&
         currentItems.map((item) => (
-          <div key={item.name}>
+          <div key={item.id}>
             <UserItem user={item} />
           </div>
         ))}
@@ -77,17 +56,27 @@ function UsersList({ itemsPerPage }) {
   // We start with an empty list of items.
   const [currentItems, setCurrentItems] = useState(null);
   const [pageCount, setPageCount] = useState(0);
+  const [searchString, setSearchString] = useState(null);
   // Here we use item offsets; we could also use page offsets
   // following the API or data you're working with.
   const [itemOffset, setItemOffset] = useState(0);
 
   useEffect(() => {
     // Fetch items from another resources.
+    getAllUsers(itemOffset, itemsPerPage, searchString)
+      .then((response) => {
+        let users = response.data;
+        console.log(users);
+        setCurrentItems(users.content);
+        setPageCount(users.totalPages);
+      })
+      .catch((error) => console.log(error));
+
     const endOffset = itemOffset + itemsPerPage;
     console.log(`Loading items from ${itemOffset} to ${endOffset}`);
-    setCurrentItems(items.slice(itemOffset, endOffset));
-    setPageCount(Math.ceil(items.length / itemsPerPage));
-  }, [itemOffset, itemsPerPage]);
+    //setCurrentItems(items.slice(itemOffset, endOffset));
+    //setPageCount(Math.ceil(items.length / itemsPerPage));
+  }, [itemOffset, itemsPerPage, searchString]);
 
   // Invoke when user click to request another page.
   const handlePageClick = (event) => {
@@ -100,6 +89,11 @@ function UsersList({ itemsPerPage }) {
 
   return (
     <>
+      <div className="add-user">
+        <label>Search User:</label>
+        <input type="text" onChange={(e) => setSearchString(e.target.value)} />
+      </div>
+
       <Items currentItems={currentItems} />
       <ReactPaginate
         className="page-group"
