@@ -1,6 +1,5 @@
 package com.user.manager.service;
 
-import com.user.manager.dto.UserPageDTO;
 import com.user.manager.exceptions.UserNotFoundException;
 import com.user.manager.models.User;
 import com.user.manager.models.UserPage;
@@ -11,7 +10,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 

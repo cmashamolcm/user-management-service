@@ -2,12 +2,17 @@ import React, { useEffect, useState } from "react";
 import ReactPaginate from "react-paginate";
 import { Link } from "react-router-dom";
 import "../common.css";
-import { getAllUsers } from "../services/user-service";
+import { deleteUser, getAllUsers } from "../services/user-service";
 
 // Example items, to simulate fetching from another resources.
 const items = [];
-function UserItem({ user }) {
+function UserItem({ user, deleteUser }) {
   const dob = new Date(user.birthday);
+
+  const handleDelete = (event) => {
+    deleteUser(user.id);
+  };
+
   return (
     <>
       {user && (
@@ -32,20 +37,22 @@ function UserItem({ user }) {
           <Link to={"/user/" + user.id}>
             <button className="btn btn-primary">Edit</button>
           </Link>
-          <button className="btn btn-primary deletebtn">Delete</button>
+          <button className="btn btn-primary deletebtn" onClick={handleDelete}>
+            Delete
+          </button>
         </div>
       )}
     </>
   );
 }
 
-function Items({ currentItems }) {
+function Items({ currentItems, deleteUser }) {
   return (
     <div className="user-items-list">
       {currentItems &&
         currentItems.map((item) => (
           <div key={item.id}>
-            <UserItem user={item} />
+            <UserItem user={item} deleteUser={deleteUser} />
           </div>
         ))}
     </div>
@@ -61,8 +68,7 @@ function UsersList({ itemsPerPage }) {
   // following the API or data you're working with.
   const [itemOffset, setItemOffset] = useState(0);
 
-  useEffect(() => {
-    // Fetch items from another resources.
+  const loadUsers = function () {
     getAllUsers(itemOffset, itemsPerPage, searchString)
       .then((response) => {
         let users = response.data;
@@ -74,6 +80,10 @@ function UsersList({ itemsPerPage }) {
 
     const endOffset = itemOffset + itemsPerPage;
     console.log(`Loading items from ${itemOffset} to ${endOffset}`);
+  };
+  useEffect(() => {
+    // Fetch users by API call.
+    loadUsers();
     //setCurrentItems(items.slice(itemOffset, endOffset));
     //setPageCount(Math.ceil(items.length / itemsPerPage));
   }, [itemOffset, itemsPerPage, searchString]);
@@ -87,6 +97,15 @@ function UsersList({ itemsPerPage }) {
     setItemOffset(newOffset);
   };
 
+  const deleteUserWithId = function (id) {
+    deleteUser(id)
+      .then((response) => {
+        loadUsers();
+        console.log(id, currentItems);
+      })
+      .catch((error) => console.log(error));
+  };
+
   return (
     <>
       <div className="add-user">
@@ -94,7 +113,7 @@ function UsersList({ itemsPerPage }) {
         <input type="text" onChange={(e) => setSearchString(e.target.value)} />
       </div>
 
-      <Items currentItems={currentItems} />
+      <Items currentItems={currentItems} deleteUser={deleteUserWithId} />
       <ReactPaginate
         className="page-group"
         breakLabel="..."
