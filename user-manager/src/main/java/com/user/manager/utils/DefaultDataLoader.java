@@ -15,7 +15,7 @@ import java.io.InputStream;
 import java.util.List;
 
 @Component
-@Profile("dev")
+@Profile({"dev", "test"})
 public class DefaultDataLoader implements CommandLineRunner {
 
     @Autowired
